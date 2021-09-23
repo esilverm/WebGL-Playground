@@ -2,6 +2,7 @@ import Editor, { loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useRef } from 'react';
 
+import { Canvas } from './components/Canvas';
 import { language, conf } from './monaco/glsl';
 import { theme } from './monaco/theme';
 
@@ -30,20 +31,27 @@ void main() {
 function App() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   return (
-    <div className="App">
-      <Editor
-        height="100vh"
-        width="70vw"
-        defaultLanguage="glsl"
-        theme="glsl-dark"
-        defaultValue={initialFragShader}
-        onMount={(editor) => (editorRef.current = editor)}
-        options={{
-          minimap: {
-            enabled: false,
-          },
-        }}
-      />
+    <div className="relative">
+      <Canvas />
+      <div className="absolute top-0 left-0">
+        <Editor
+          height="100vh"
+          width="70vw"
+          defaultLanguage="glsl"
+          theme="glsl-dark"
+          defaultValue={initialFragShader}
+          onMount={(editor) => (editorRef.current = editor)}
+          keepCurrentModel={true}
+          options={{
+            fontSize: 18,
+            formatOnPaste: true,
+            showUnused: true,
+            minimap: {
+              enabled: false,
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }
