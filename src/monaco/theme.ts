@@ -241,7 +241,7 @@ export const theme: editor.IStandaloneThemeData = {
   ],
   colors: {
     'editor.foreground': '#DEDEDE',
-    'editor.background': '#00000077',
+    'editor.background': '#00000000',
     'editor.selectionBackground': '#212121',
     'editor.lineHighlightBackground': '#2A2A2A',
     'editorCursor.foreground': '#9F9F9F',

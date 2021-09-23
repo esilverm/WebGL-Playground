@@ -31,11 +31,14 @@ void main() {
 function App() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   return (
-    <div className="relative">
+    <div className="relative h-screen w-screen">
       <Canvas />
-      <div className="absolute top-0 left-0">
+      <div
+        className="absolute top-0 left-0 m-4 rounded-lg overflow-hidden"
+        style={{ backgroundColor: '#000000CC', height: '95%' }}
+      >
         <Editor
-          height="100vh"
+          height="100%"
           width="70vw"
           defaultLanguage="glsl"
           theme="glsl-dark"
@@ -48,6 +51,9 @@ function App() {
             showUnused: true,
             minimap: {
               enabled: false,
+            },
+            padding: {
+              top: 20,
             },
           }}
         />
