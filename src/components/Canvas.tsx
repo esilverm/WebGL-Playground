@@ -18,5 +18,7 @@ export const Canvas = () => {
     },
   });
 
-  return <canvas className="w-screen h-screen" ref={canvasRef} />;
+  return (
+    <canvas id="webgl_canvas" className="w-screen h-screen" ref={canvasRef} />
+  );
 };
