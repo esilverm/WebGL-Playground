@@ -184,6 +184,8 @@ export const language: languages.IMonarchLanguage = {
   escapes:
     /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
 
+  invalid: '"',
+
   // The main tokenizer for our languages
   tokenizer: {
     root: [
@@ -192,13 +194,20 @@ export const language: languages.IMonarchLanguage = {
         /[a-z_$][\w$]*/,
         {
           cases: {
-            '@typeKeywords': 'keyword',
+            '@typeKeywords': 'storage.type',
             '@keywords': 'keyword',
-            '@builtins': 'constructor.identifier',
+            '@builtins': {
+              cases: {
+                'gl_(Max|Min)[\\w$]*': 'support.constant',
+                'gl_[\\w$]*': 'support.other.variable',
+                '@default': 'support.function',
+              },
+            },
             '@default': 'identifier',
           },
         },
       ],
+
       [/[A-Z][\w$]*/, 'type.identifier'], // to show class names nicely
 
       // to allow for handlebars notation within glsl code
