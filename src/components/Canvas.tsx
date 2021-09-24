@@ -1,11 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import useResizeObserver from 'use-resize-observer';
 
-import WebGLUtils from '../helpers/webgl';
+import {
+  createAndBindBuffer,
+  getGLContext,
+  getProgram,
+  getShader,
+  linkGPUAndCPU,
+} from '../helpers/webgl';
 
 import { useWebGL } from './WebGLProvider';
 
-const webGL = new WebGLUtils();
 const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
 
 export const Canvas = () => {
@@ -20,35 +25,31 @@ export const Canvas = () => {
         const dpr = window.devicePixelRatio;
 
         canvasRef.current.width = Math.round(width * dpr);
-        canvasRef.current.height = Math.round(width * dpr);
+        canvasRef.current.height = Math.round(height * dpr);
       }
     },
   });
 
   useEffect(() => {
-    const gl: WebGLRenderingContext = webGL.getGLContext(canvasRef.current);
-    const vs: WebGLShader = webGL.getShader(gl, vertexShader, gl.VERTEX_SHADER);
-    const fs: WebGLShader = webGL.getShader(
-      gl,
-      fragmentShader,
-      gl.FRAGMENT_SHADER
-    );
-    const program = webGL.getProgram(gl, vs, fs);
+    const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
+    const vs: WebGLShader = getShader(gl, vertexShader, gl.VERTEX_SHADER);
+    const fs: WebGLShader = getShader(gl, fragmentShader, gl.FRAGMENT_SHADER);
+    const program = getProgram(gl, vs, fs);
 
-    const buffer = webGL.createAndBindBuffer(
+    const buffer = createAndBindBuffer(
       gl,
       gl.ARRAY_BUFFER,
       gl.STATIC_DRAW,
       new Float32Array(coordinates)
     );
 
-    webGL.linkGPUAndCPU(gl, {
+    linkGPUAndCPU(gl, {
       program,
       channel: gl.ARRAY_BUFFER,
       buffer,
     });
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }, [fragmentShader, vertexShader]);
 
   return <canvas className="w-screen h-screen" ref={canvasRef}></canvas>;

@@ -4,9 +4,10 @@ const initialEditorFragmentShader =
   `
 // uniform float uTime;
 varying vec3 vPos;
-
+  
 void main() {
-  gl_FragColor = vec4(sqrt(vPos), 1.);
+  vec3 color = vec3(1.);
+  gl_FragColor = vec4(sqrt(color), 1.);
 }`.trim() + '\n';
 
 const initialVertexShader =
