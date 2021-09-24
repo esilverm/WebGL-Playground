@@ -7,8 +7,10 @@ import {
   getProgram,
   getShader,
   linkGPUAndCPU,
+  setUniform,
 } from '../helpers/webgl';
 
+import { useTime } from './TimeProvider';
 import { useWebGL } from './WebGLProvider';
 
 const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
@@ -16,6 +18,7 @@ const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const { vertexShader, fragmentShader } = useWebGL();
+  const { time } = useTime();
   // Resize our canvas to full screen
   useResizeObserver<HTMLCanvasElement>({
     ref: canvasRef,
@@ -34,7 +37,7 @@ export const Canvas = () => {
     const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
     const vs: WebGLShader = getShader(gl, vertexShader, gl.VERTEX_SHADER);
     const fs: WebGLShader = getShader(gl, fragmentShader, gl.FRAGMENT_SHADER);
-    const program = getProgram(gl, vs, fs);
+    const program: WebGLProgram = getProgram(gl, vs, fs);
 
     const buffer = createAndBindBuffer(
       gl,
@@ -49,8 +52,9 @@ export const Canvas = () => {
       buffer,
     });
 
+    setUniform(gl, program, '1f', 'uTime', time);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }, [fragmentShader, vertexShader]);
+  }, [fragmentShader, time, vertexShader]);
 
   return <canvas className="w-screen h-screen" ref={canvasRef}></canvas>;
 };

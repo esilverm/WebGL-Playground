@@ -6,6 +6,7 @@ import React, { useRef, useState } from 'react';
 
 import { Canvas } from './components/Canvas';
 import { EditorToggle } from './components/EditorToggle';
+import { TimeProvider } from './components/TimeProvider';
 import { useWebGL, WebGLProvider } from './components/WebGLProvider';
 import { language, conf } from './monaco/glsl';
 import { theme } from './monaco/theme';
@@ -89,7 +90,9 @@ function App() {
 const AppWithProviders = () => {
   return (
     <WebGLProvider>
-      <App />
+      <TimeProvider>
+        <App />
+      </TimeProvider>
     </WebGLProvider>
   );
 };

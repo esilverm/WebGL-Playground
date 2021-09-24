@@ -62,7 +62,7 @@ export const linkGPUAndCPU = (gl, { program, channel, buffer }) => {
 
 export const setUniform = (gl, program, type, name, a, b, c, d, e, f) => {
   if (gl) {
-    let loc = gl.getUniformLocation(gl.program, name);
+    let loc = gl.getUniformLocation(program, name);
     gl[`uniform${type}`](loc, a, b, c, d, e, f);
   }
 };
