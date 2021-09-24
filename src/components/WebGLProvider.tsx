@@ -2,13 +2,11 @@ import React, { createContext, useContext, useState } from 'react';
 
 const initialEditorFragmentShader =
   `
-uniform float uTime;
+// uniform float uTime;
 varying vec3 vPos;
 
 void main() {
-  vec3 color = vec3(0., 0., 0.);
-
-  gl_FragColor = vec3(sqrt(color), 1.);
+  gl_FragColor = vec4(sqrt(vPos), 1.);
 }`.trim() + '\n';
 
 const initialVertexShader =
@@ -17,11 +15,10 @@ attribute vec3 aPos;
 varying   vec3 vPos;
 
 void main() {
-  vPos = aPos;
-  gl_Position = vec4(aPos, 1.);
+  gl_Position = vec4(vPos=aPos, 1.);
 }`.trim() + '\n';
 
-const fragmentShaderHeader = `
+export const shaderHeader = `
 precision highp float;
 float noise(vec3 v) {
    vec4 r[2];
@@ -37,8 +34,9 @@ float noise(vec3 v) {
 }\n`;
 
 export const WebGLContext = createContext<{
-  vertexShader: string;
+  editorVertexShader: string;
   editorFragmentShader: string;
+  vertexShader: string;
   fragmentShader: string;
   files: {
     [name: string]: {
@@ -48,14 +46,15 @@ export const WebGLContext = createContext<{
       setValue: React.Dispatch<React.SetStateAction<string>>;
     };
   };
-  setVertexShader: React.Dispatch<React.SetStateAction<string>>;
+  setEditorVertexShader: React.Dispatch<React.SetStateAction<string>>;
   setEditorFragmentShader: React.Dispatch<React.SetStateAction<string>>;
 }>({
   vertexShader: '',
+  editorVertexShader: '',
   editorFragmentShader: '',
   fragmentShader: '',
   files: {},
-  setVertexShader: () => {},
+  setEditorVertexShader: () => {},
   setEditorFragmentShader: () => {},
 });
 
@@ -63,15 +62,19 @@ export const WebGLProvider: React.FC = ({ children }) => {
   const [editorFragmentShader, setEditorFragmentShader] = useState(
     initialEditorFragmentShader
   );
-  const [vertexShader, setVertexShader] = useState(initialVertexShader);
-  const [jsFile, setJSFile] = useState('');
+  const [editorVertexShader, setEditorVertexShader] =
+    useState(initialVertexShader);
+  const [initContent, setInitContent] = useState('');
+  const [renderContent, setRenderContent] = useState('');
+  const [eventsContent, setEventsContent] = useState('');
 
   return (
     <WebGLContext.Provider
       value={{
         editorFragmentShader,
-        fragmentShader: fragmentShaderHeader + editorFragmentShader,
-        vertexShader,
+        editorVertexShader,
+        fragmentShader: shaderHeader + editorFragmentShader,
+        vertexShader: shaderHeader + editorVertexShader,
         files: {
           fragment: {
             name: 'fragment.glsl',
@@ -82,30 +85,30 @@ export const WebGLProvider: React.FC = ({ children }) => {
           vertex: {
             name: 'vertex.glsl',
             language: 'glsl',
-            value: vertexShader,
-            setValue: setVertexShader,
+            value: editorVertexShader,
+            setValue: setEditorVertexShader,
           },
           init: {
             name: 'init.js',
             language: 'javascript',
-            value: jsFile,
-            setValue: setJSFile,
+            value: initContent,
+            setValue: setInitContent,
           },
           render: {
             name: 'render.js',
             language: 'javascript',
-            value: jsFile,
-            setValue: setJSFile,
+            value: renderContent,
+            setValue: setRenderContent,
           },
           events: {
             name: 'events.js',
             language: 'javascript',
-            value: jsFile,
-            setValue: setJSFile,
+            value: eventsContent,
+            setValue: setEventsContent,
           },
         },
         setEditorFragmentShader,
-        setVertexShader,
+        setEditorVertexShader,
       }}
     >
       {children}
