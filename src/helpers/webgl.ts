@@ -2,14 +2,28 @@
 
 const VERTEX_SIZE = 3;
 
-export const getGLContext = (canvas) => {
+export const getGLContext = (
+  canvas: HTMLCanvasElement
+): WebGLRenderingContext => {
   const gl = canvas.getContext('webgl');
+
+  if (!gl) {
+    throw new Error('error creating webgl rendering context');
+  }
 
   return gl;
 };
 
-export const getShader = (gl, shaderSource, shaderType) => {
+export const getShader = (
+  gl: WebGLRenderingContext,
+  shaderSource: string,
+  shaderType: number
+): WebGLShader => {
   const shader = gl.createShader(shaderType);
+
+  if (!shader) {
+    throw new Error('error creating shader');
+  }
 
   gl.shaderSource(shader, shaderSource);
   gl.compileShader(shader);
@@ -21,8 +35,16 @@ export const getShader = (gl, shaderSource, shaderType) => {
   return shader;
 };
 
-export const getProgram = (gl, vs, fs) => {
+export const getProgram = (
+  gl: WebGLRenderingContext,
+  vs: WebGLShader,
+  fs: WebGLShader
+): WebGLProgram => {
   const program = gl.createProgram();
+
+  if (!program) {
+    throw new Error('error creating webgl program');
+  }
 
   gl.attachShader(program, vs);
   gl.attachShader(program, fs);
@@ -36,8 +58,17 @@ export const getProgram = (gl, vs, fs) => {
   return program;
 };
 
-export const createAndBindBuffer = (gl, bufferType, typeOfDrawing, data) => {
+export const createAndBindBuffer = (
+  gl: WebGLRenderingContext,
+  bufferType: number,
+  typeOfDrawing: number,
+  data: BufferSource
+): WebGLBuffer => {
   const buffer = gl.createBuffer();
+
+  if (!buffer) {
+    throw new Error('error creating webgl buffer');
+  }
 
   gl.bindBuffer(bufferType, buffer);
   gl.bufferData(bufferType, data, typeOfDrawing);
@@ -45,7 +76,14 @@ export const createAndBindBuffer = (gl, bufferType, typeOfDrawing, data) => {
   return buffer;
 };
 
-export const linkGPUAndCPU = (gl, { program, channel, buffer }) => {
+export const linkGPUAndCPU = (
+  gl: WebGLRenderingContext,
+  {
+    program,
+    channel,
+    buffer,
+  }: { program: WebGLProgram; channel: number; buffer: WebGLBuffer }
+): void => {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
@@ -60,9 +98,23 @@ export const linkGPUAndCPU = (gl, { program, channel, buffer }) => {
   gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 0 * bpe);
 };
 
-export const setUniform = (gl, program, type, name, a, b, c, d, e, f) => {
+export const setUniform = (
+  gl: WebGLRenderingContext,
+  program: WebGLProgram,
+  type: string,
+  name: string,
+  a: unknown,
+  b?: unknown,
+  c?: unknown,
+  d?: unknown,
+  e?: unknown,
+  f?: unknown
+) => {
   if (gl) {
     let loc = gl.getUniformLocation(program, name);
+
+    // Setting the uniform this way isn't typescript friendly, but this wrapper around setting uniforms is a lot more helpful
+    //@ts-ignore
     gl[`uniform${type}`](loc, a, b, c, d, e, f);
   }
 };
