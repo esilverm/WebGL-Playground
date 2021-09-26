@@ -1,5 +1,4 @@
 import Editor, { loader } from '@monaco-editor/react';
-import classnames from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useRef, useState } from 'react';
@@ -21,6 +20,7 @@ loader.init().then((monaco) => {
 });
 
 function App() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentFile, setCurrentFile] = useState('fragment');
   const [editorIsVisible, setEditorVisibility] = useState(true);
   const { files } = useWebGL();

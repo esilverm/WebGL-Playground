@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+<h1 align="center">
+  WebGL Playground
+</h1>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p align="center">
+<img alt="Early Editor Preview" src="https://user-images.githubusercontent.com/24704789/134814997-79844fff-074d-47b3-89f9-6940b2804102.png"/>
+</p>
 
-## Available Scripts
+This is a live WebGL editor intended for students at NYU taking CS480 Special Topics: Computer Graphics with Ken Perlin.
 
-In the project directory, you can run:
+## Goals
 
-### `yarn start`
+When building this I had several goals:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Implement the base features included within the professor's given editor (i.e. `setUniform` helpers, event listeners, built-in uniforms and noise function, multiple file setup)
+- Add syntax highlighting, code formatting, and overall better language features to make development less dependent on memorization.
+- Implement hot reloading so the graphics will update whenever the code is changed instead of triggered on a button-press.
+- Display the art on a full screen canvas (without introducing distortion) so that the user can have a larger area to work on.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Longer term goals
 
-### `yarn test`
+- Allow for either saving, persistent storage, and or exporting of WebGL programs so students can use them in their projects and even potentially use the editor as a host for their work.
+- VSCode intellisense-like recommendations within the editor with hover capabilities so the WebGL docs are directly embedded within the site.
+- Deploy with netlify to have a public-facing editor
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Quick Start Guide
 
-### `yarn build`
+To build and or develop locally, fork and clone the repository
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+git clone https://github.com/YOUR-USER-NAME/webgl-playground.git
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+###  MacOS
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+brew install node
+brew install yarn
 
-### `yarn eject`
+# Installing dependencies
+yarn install
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Start developing
+yarn start
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Go to http://localhost:3000 and start coding!!!
+```
