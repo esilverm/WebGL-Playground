@@ -1,5 +1,6 @@
 {
   "extends": "react-app",
+  "ignorePatterns": ["**/*{.,-}min.js"],
   "plugins": ["import"],
   "rules": {
     "import/no-extraneous-dependencies": "error",

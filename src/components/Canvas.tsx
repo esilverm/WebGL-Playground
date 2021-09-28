@@ -37,6 +37,11 @@ export const Canvas = () => {
     const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
     const vs: WebGLShader = getShader(gl, vertexShader, gl.VERTEX_SHADER);
     const fs: WebGLShader = getShader(gl, fragmentShader, gl.FRAGMENT_SHADER);
+
+    if (!vs || !fs) {
+      return;
+    }
+
     const program: WebGLProgram = getProgram(gl, vs, fs);
 
     const buffer = createAndBindBuffer(

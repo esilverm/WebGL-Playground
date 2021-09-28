@@ -1,5 +1,7 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import { parseWebGLError, WebGLErrorMarker } from '../helpers/errors';
+import * as glslx from '../helpers/glslx.min';
 import { useDebouncedState } from '../hooks/UseDebouncedState';
 
 const initialEditorFragmentShader =
@@ -45,6 +47,7 @@ export const WebGLContext = createContext<{
       language: string;
       value: string;
       setValue: React.Dispatch<React.SetStateAction<string>>;
+      monacoMarkers?: WebGLErrorMarker[];
     };
   };
   setEditorVertexShader: React.Dispatch<React.SetStateAction<string>>;
@@ -69,6 +72,31 @@ export const WebGLProvider: React.FC = ({ children }) => {
   const [renderContent, setRenderContent] = useDebouncedState('');
   const [eventsContent, setEventsContent] = useDebouncedState('');
 
+  const [fragmentMarkers, setFragmentMarkers] = useState<WebGLErrorMarker[]>(
+    [] as WebGLErrorMarker[]
+  );
+  const [vertexMarkers, setVertexMarkers] = useState<WebGLErrorMarker[]>(
+    [] as WebGLErrorMarker[]
+  );
+
+  // wheb fragment shader and vertex shaders are updated, validate them and pass model markers to
+
+  useEffect(() => {
+    //@ts-ignore
+    const compiledGLSLX = glslx.compile(shaderHeader + editorFragmentShader);
+    if (compiledGLSLX.output === null) {
+      setFragmentMarkers(parseWebGLError(compiledGLSLX.log));
+    }
+  }, [editorFragmentShader]);
+
+  useEffect(() => {
+    //@ts-ignore
+    const compiledGLSLX = glslx.compile(shaderHeader + editorVertexShader);
+    if (compiledGLSLX.output === null) {
+      setVertexMarkers(parseWebGLError(compiledGLSLX.log));
+    }
+  }, [editorVertexShader]);
+
   return (
     <WebGLContext.Provider
       value={{
@@ -82,12 +110,14 @@ export const WebGLProvider: React.FC = ({ children }) => {
             language: 'glsl',
             value: editorFragmentShader,
             setValue: setEditorFragmentShader,
+            monacoMarkers: fragmentMarkers,
           },
           vertex: {
             name: 'vertex.glsl',
             language: 'glsl',
             value: editorVertexShader,
             setValue: setEditorVertexShader,
+            monacoMarkers: vertexMarkers,
           },
           init: {
             name: 'init.js',
