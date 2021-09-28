@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+
+import { useDebouncedState } from '../hooks/UseDebouncedState';
 
 const initialEditorFragmentShader =
   `
@@ -58,14 +60,14 @@ export const WebGLContext = createContext<{
 });
 
 export const WebGLProvider: React.FC = ({ children }) => {
-  const [editorFragmentShader, setEditorFragmentShader] = useState(
+  const [editorFragmentShader, setEditorFragmentShader] = useDebouncedState(
     initialEditorFragmentShader
   );
   const [editorVertexShader, setEditorVertexShader] =
-    useState(initialVertexShader);
-  const [initContent, setInitContent] = useState('');
-  const [renderContent, setRenderContent] = useState('');
-  const [eventsContent, setEventsContent] = useState('');
+    useDebouncedState(initialVertexShader);
+  const [initContent, setInitContent] = useDebouncedState('');
+  const [renderContent, setRenderContent] = useDebouncedState('');
+  const [eventsContent, setEventsContent] = useDebouncedState('');
 
   return (
     <WebGLContext.Provider

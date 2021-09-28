@@ -45,7 +45,7 @@ function App() {
                 x: { type: 'spring', stiffness: 300, damping: 30 },
               }}
             >
-              <div className="absolute uppercase text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans">
+              <div className="absolute uppercase text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans cursor-text select-none">
                 {files[currentFile].language === 'glsl'
                   ? 'webgl'
                   : files[currentFile].language}

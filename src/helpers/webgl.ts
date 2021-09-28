@@ -29,7 +29,8 @@ export const getShader = (
   gl.compileShader(shader);
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error(gl.getShaderInfoLog(shader));
+    // there is an error within the code of our shader (we can get this error from glslx instead)
+    // console.error(gl.getShaderInfoLog(shader));
   }
 
   return shader;
@@ -52,7 +53,8 @@ export const getProgram = (
   gl.useProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error(gl.getProgramInfoLog(program));
+    // the current shader is invalid
+    //console.error(`Program error: ${gl.getProgramInfoLog(program)}`);
   }
 
   return program;

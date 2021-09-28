@@ -13,6 +13,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "glslx": "^0.2.13",
+    "lodash": "^4.17.21",
     "monaco-editor": "^0.27.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -47,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.175",
     "autoprefixer": "^9",
     "classnames": "^2.3.1",
     "framer-motion": "^4.1.17",
