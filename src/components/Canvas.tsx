@@ -54,7 +54,7 @@ export const Canvas = () => {
 
     setUniform(gl, program, '1f', 'uTime', time);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }, [fragmentShader, time, vertexShader]);
+  }, [fragmentShader, time, vertexShader, canvasRef]);
 
   return <canvas className="w-screen h-screen" ref={canvasRef}></canvas>;
 };

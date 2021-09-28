@@ -2,12 +2,10 @@ import React, { createContext, useContext, useState } from 'react';
 
 const initialEditorFragmentShader =
   `
-// uniform float uTime;
 varying vec3 vPos;
   
 void main() {
-  vec3 color = vec3(1.);
-  gl_FragColor = vec4(sqrt(color), 1.);
+  gl_FragColor = vec4(sqrt(vPos), 1.);
 }`.trim() + '\n';
 
 const initialVertexShader =
