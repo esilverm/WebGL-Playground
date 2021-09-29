@@ -43,15 +43,11 @@ function App() {
   return (
     <div className="relative h-screen w-screen">
       <Canvas />
-      <div
-        className="absolute top-0 left-0 m-4 rounded-lg overflow-hidden"
-        style={{ height: '95%' }}
-      >
+      <div className="absolute top-0 left-0 m-4 " style={{ height: '95%' }}>
         <AnimatePresence>
           {editorIsVisible && (
             <motion.div
-              className="h-full w-full"
-              style={{ backgroundColor: '#000000CC' }}
+              className="h-full w-full rounded-b-lg overflow-hidden"
               initial={{ x: -1300 }}
               animate={{ x: 0 }}
               exit={{ x: -1300 }}
@@ -59,39 +55,59 @@ function App() {
                 x: { type: 'spring', stiffness: 300, damping: 30 },
               }}
             >
-              <div className="absolute uppercase text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans cursor-text select-none">
-                {files[currentFile].language === 'glsl'
-                  ? 'webgl'
-                  : files[currentFile].language}
+              <div className="h-10 w-full flex justify-start items-center my-1">
+                {Object.keys(files).map((key) => {
+                  const { name } = files[key];
+                  return (
+                    <div
+                      key={name}
+                      className="mx-1 px-4 py-0.5 text-white capitalize font-mono rounded cursor-pointer select-none"
+                      style={{ backgroundColor: '#000000CC' }}
+                      onClick={() => {
+                        setCurrentFile(name.split('.')[0]);
+                      }}
+                    >
+                      {name.split('.')[0]}
+                    </div>
+                  );
+                })}
               </div>
-              <Editor
-                height="100%"
-                width="60vw"
-                theme="glsl-dark"
-                path={files[currentFile].name}
-                language={files[currentFile].language}
-                value={files[currentFile].value}
-                onMount={(editor) => (editorRef.current = editor)}
-                onChange={(value) => files[currentFile].setValue(value ?? '')}
-                keepCurrentModel={true}
-                options={{
-                  fontSize: 18,
-                  formatOnPaste: true,
-                  showUnused: true,
-                  minimap: {
-                    enabled: false,
-                  },
-                  scrollBeyondLastLine: false,
-                  scrollbar: {
-                    verticalScrollbarSize: 16,
-                  },
-                  padding: {
-                    top: 16,
-                  },
-                  // NOTE: if the wrapping gets annoying we can just turn it to "on"
-                  wordWrap: 'bounded',
-                }}
-              />
+              <div
+                className="h-full w-full relative rounded-lg overflow-hidden"
+                style={{ backgroundColor: '#000000CC' }}
+              >
+                <div className="absolute uppercase  text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans cursor-text select-none">
+                  {files[currentFile].language === 'glsl' ? 'webgl' : 'js'}
+                </div>
+                <Editor
+                  height="100%"
+                  width="60vw"
+                  theme="glsl-dark"
+                  path={files[currentFile].name}
+                  language={files[currentFile].language}
+                  value={files[currentFile].value}
+                  onMount={(editor) => (editorRef.current = editor)}
+                  onChange={(value) => files[currentFile].setValue(value ?? '')}
+                  keepCurrentModel={true}
+                  options={{
+                    fontSize: 18,
+                    formatOnPaste: true,
+                    showUnused: true,
+                    minimap: {
+                      enabled: false,
+                    },
+                    scrollBeyondLastLine: false,
+                    scrollbar: {
+                      verticalScrollbarSize: 16,
+                    },
+                    padding: {
+                      top: 16,
+                    },
+                    // NOTE: if the wrapping gets annoying we can just turn it to "on"
+                    wordWrap: 'bounded',
+                  }}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -109,6 +109,12 @@ export const WebGLProvider: React.FC = ({ children }) => {
         fragmentShader: shaderHeader + editorFragmentShader,
         vertexShader: shaderHeader + editorVertexShader,
         files: {
+          init: {
+            name: 'init.js',
+            language: 'javascript',
+            value: initContent,
+            setValue: setInitContent,
+          },
           fragment: {
             name: 'fragment.glsl',
             language: 'glsl',
@@ -122,12 +128,6 @@ export const WebGLProvider: React.FC = ({ children }) => {
             value: editorVertexShader,
             setValue: setEditorVertexShader,
             monacoMarkers: vertexMarkers,
-          },
-          init: {
-            name: 'init.js',
-            language: 'javascript',
-            value: initContent,
-            setValue: setInitContent,
           },
           render: {
             name: 'render.js',
