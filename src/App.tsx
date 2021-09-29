@@ -1,7 +1,7 @@
-import Editor, { loader } from '@monaco-editor/react';
+import Editor, { loader, useMonaco } from '@monaco-editor/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Canvas } from './components/Canvas';
 import { EditorToggle } from './components/EditorToggle';
@@ -24,6 +24,20 @@ function App() {
   const [currentFile, setCurrentFile] = useState('fragment');
   const [editorIsVisible, setEditorVisibility] = useState(true);
   const { files } = useWebGL();
+  const monaco = useMonaco();
+
+  // INFO: If we are in an editor that provides monacoMarkers, show them with our code when they appear
+  useEffect(() => {
+    if (monaco && monaco.editor && files[currentFile].monacoMarkers) {
+      const model = monaco.editor.getModels();
+
+      monaco.editor.setModelMarkers(
+        model[0],
+        'glsl',
+        files[currentFile].monacoMarkers as monaco.editor.IMarkerData[]
+      );
+    }
+  }, [currentFile, files, monaco]);
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   return (

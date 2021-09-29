@@ -86,6 +86,8 @@ export const WebGLProvider: React.FC = ({ children }) => {
     const compiledGLSLX = glslx.compile(shaderHeader + editorFragmentShader);
     if (compiledGLSLX.output === null) {
       setFragmentMarkers(parseWebGLError(compiledGLSLX.log));
+    } else {
+      setFragmentMarkers([]);
     }
   }, [editorFragmentShader]);
 
@@ -94,6 +96,8 @@ export const WebGLProvider: React.FC = ({ children }) => {
     const compiledGLSLX = glslx.compile(shaderHeader + editorVertexShader);
     if (compiledGLSLX.output === null) {
       setVertexMarkers(parseWebGLError(compiledGLSLX.log));
+    } else {
+      setVertexMarkers([]);
     }
   }, [editorVertexShader]);
 
