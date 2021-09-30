@@ -61,5 +61,11 @@ export const Canvas = () => {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }, [fragmentShader, time, vertexShader, canvasRef]);
 
-  return <canvas className="w-screen h-screen" ref={canvasRef}></canvas>;
+  return (
+    <canvas
+      className="m-auto h-screen"
+      style={{ width: '100vh' }}
+      ref={canvasRef}
+    ></canvas>
+  );
 };

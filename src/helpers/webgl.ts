@@ -102,11 +102,11 @@ export const linkGPUAndCPU = (
     projection as Float32List
   );
 
-  // gl.enable(gl.DEPTH_TEST);
-  // gl.depthFunc(gl.LEQUAL);
-  // gl.clearDepth(-1);
-  // gl.enable(gl.BLEND);
-  // gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+  gl.clearDepth(-1);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
   const aPos = gl.getAttribLocation(program, 'aPos');
   gl.bindBuffer(channel, buffer);
