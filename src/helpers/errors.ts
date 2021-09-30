@@ -14,7 +14,6 @@ export type WebGLErrorMarker = {
 export const parseWebGLError = (error: string) => {
   const headerLength = shaderHeader.split('\n').length - 1;
   const errorList = error.split('<stdin>:').filter(Boolean);
-  console.log(errorList);
   // get the lines with errors
   return errorList.map((currentError): WebGLErrorMarker => {
     const [startLineNumber, startColumn, ...rest] = currentError.split(':');

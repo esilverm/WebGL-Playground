@@ -1,4 +1,5 @@
 import Editor, { loader, useMonaco } from '@monaco-editor/react';
+import classnames from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useEffect, useRef, useState } from 'react';
@@ -58,11 +59,20 @@ function App() {
               <div className="h-10 w-full flex justify-start items-center my-1">
                 {Object.keys(files).map((key) => {
                   const { name } = files[key];
+                  const isActive = name.split('.')[0] === currentFile;
                   return (
                     <div
                       key={name}
-                      className="mx-1 px-4 py-0.5 text-white capitalize font-mono rounded cursor-pointer select-none"
-                      style={{ backgroundColor: '#000000CC' }}
+                      className={classnames(
+                        'mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none',
+                        {
+                          'text-black': isActive,
+                          'text-white': !isActive,
+                        }
+                      )}
+                      style={{
+                        backgroundColor: isActive ? '#BABABACC' : '#000000CC',
+                      }}
                       onClick={() => {
                         setCurrentFile(name.split('.')[0]);
                       }}

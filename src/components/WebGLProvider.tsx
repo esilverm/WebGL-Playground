@@ -18,11 +18,12 @@ attribute vec3 aPos;
 varying   vec3 vPos;
 
 void main() {
-  gl_Position = vec4(vPos=aPos, 1.);
+  gl_Position = vec4((vPos=(uAspect * vec4(aPos, 1.)).xyz), 1.);
 }`.trim() + '\n';
 
 export const shaderHeader = `
 precision highp float;
+uniform mat4 uAspect;
 float noise(vec3 v) {
    vec4 r[2];
    const mat4 E = mat4(0.,0.,0.,0., 0.,.5,.5,0., .5,0.,.5,0., .5,.5,0.,0.);

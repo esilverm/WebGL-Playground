@@ -87,16 +87,31 @@ export const linkGPUAndCPU = (
   }: { program: WebGLProgram; channel: number; buffer: WebGLBuffer }
 ): void => {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.enable(gl.DEPTH_TEST);
-  gl.depthFunc(gl.LEQUAL);
-  gl.clearDepth(-1);
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-  let aPos = gl.getAttribLocation(program, 'aPos');
+  // Compute a projection matrix to handle the aspect ratio
+  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  const fieldOfViewRadians = Math.PI * (40 / 180);
+  const projection = perspective(fieldOfViewRadians, aspect, 0, 2000);
+
+  setUniform(
+    gl,
+    program,
+    'Matrix4fv',
+    'uAspect',
+    false,
+    projection as Float32List
+  );
+
+  // gl.enable(gl.DEPTH_TEST);
+  // gl.depthFunc(gl.LEQUAL);
+  // gl.clearDepth(-1);
+  // gl.enable(gl.BLEND);
+  // gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  const aPos = gl.getAttribLocation(program, 'aPos');
   gl.bindBuffer(channel, buffer);
   gl.enableVertexAttribArray(aPos);
-  let bpe = Float32Array.BYTES_PER_ELEMENT;
+  const bpe = Float32Array.BYTES_PER_ELEMENT;
   gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 0 * bpe);
 };
 
@@ -120,3 +135,38 @@ export const setUniform = (
     gl[`uniform${type}`](loc, a, b, c, d, e, f);
   }
 };
+
+// Perspective matrix function from https://stackoverflow.com/questions/30429523/webgl-perspective-projection-matrix
+function perspective(
+  fieldOfViewRadians: number,
+  aspect: number,
+  zNear: number,
+  zFar: number
+) {
+  const dst = new Float32Array(16);
+
+  const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewRadians);
+  const rangeInv = 1.0 / (zNear - zFar);
+
+  dst[0] = f / aspect;
+  dst[1] = 0;
+  dst[2] = 0;
+  dst[3] = 0;
+
+  dst[4] = 0;
+  dst[5] = f;
+  dst[6] = 0;
+  dst[7] = 0;
+
+  dst[8] = 0;
+  dst[9] = 0;
+  dst[10] = (zNear + zFar) * rangeInv;
+  dst[11] = -1;
+
+  dst[12] = 0;
+  dst[13] = 0;
+  dst[14] = zNear * zFar * rangeInv * 2;
+  dst[15] = 0;
+
+  return dst;
+}
