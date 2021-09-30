@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-<img alt="Early Editor Preview" src="https://user-images.githubusercontent.com/24704789/134814997-79844fff-074d-47b3-89f9-6940b2804102.png"/>
+<img alt="Early Editor Preview" src="https://user-images.githubusercontent.com/24704789/135523061-7f8c8bd2-0a4b-42fd-9c16-813e49640980.png"/>
 </p>
 
 This is a live WebGL editor intended for students at NYU taking CS480 Special Topics: Computer Graphics with Ken Perlin.
