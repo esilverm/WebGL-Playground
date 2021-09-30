@@ -1,3 +1,4 @@
+/* eslint-disable no-new-func */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseWebGLError, WebGLErrorMarker } from '../helpers/errors';
@@ -20,6 +21,12 @@ varying   vec3 vPos;
 void main() {
   gl_Position = vec4((uAspect * vec4((vPos=aPos), 1.)).xyz, 1.);
 }`.trim() + '\n';
+
+const initialRenderValue =
+  `
+S.setUniform('1f', 'uTime', time);
+S.gl.drawArrays(S.gl.TRIANGLE_STRIP, 0, 4);
+`.trim() + '\n';
 
 export const shaderHeader = `
 precision highp float;
@@ -53,6 +60,8 @@ export const WebGLContext = createContext<{
   };
   setEditorVertexShader: React.Dispatch<React.SetStateAction<string>>;
   setEditorFragmentShader: React.Dispatch<React.SetStateAction<string>>;
+  initCallable: Function;
+  renderCallable: Function;
 }>({
   vertexShader: '',
   editorVertexShader: '',
@@ -61,6 +70,8 @@ export const WebGLContext = createContext<{
   files: {},
   setEditorVertexShader: () => {},
   setEditorFragmentShader: () => {},
+  initCallable: () => {},
+  renderCallable: () => {},
 });
 
 export const WebGLProvider: React.FC = ({ children }) => {
@@ -70,7 +81,8 @@ export const WebGLProvider: React.FC = ({ children }) => {
   const [editorVertexShader, setEditorVertexShader] =
     useDebouncedState(initialVertexShader);
   const [initContent, setInitContent] = useDebouncedState('');
-  const [renderContent, setRenderContent] = useDebouncedState('');
+  const [renderContent, setRenderContent] =
+    useDebouncedState(initialRenderValue);
   const [eventsContent, setEventsContent] = useDebouncedState('');
 
   const [fragmentMarkers, setFragmentMarkers] = useState<WebGLErrorMarker[]>(
@@ -80,7 +92,13 @@ export const WebGLProvider: React.FC = ({ children }) => {
     [] as WebGLErrorMarker[]
   );
 
-  // wheb fragment shader and vertex shaders are updated, validate them and pass model markers to
+  const [initCallable, setInitCallable] = useState<{ f: Function }>({
+    f: new Function(),
+  });
+  const [renderCallable, setRenderCallable] = useState<{ f: Function }>({
+    f: new Function(),
+  });
+  // when fragment shader and vertex shaders are updated, validate them and pass model markers to
 
   useEffect(() => {
     //@ts-ignore
@@ -101,6 +119,41 @@ export const WebGLProvider: React.FC = ({ children }) => {
       setVertexMarkers([]);
     }
   }, [editorVertexShader]);
+
+  useEffect(() => {
+    const initCode = `
+    const S = {};
+    try {
+    ${initContent}
+    } catch (e) {
+      console.error('init error:',  e);
+    }
+    return S;
+    `;
+
+    try {
+      setInitCallable({ f: new Function(initCode) });
+    } catch (e) {
+      console.error('not a function');
+    }
+  }, [initContent]);
+
+  useEffect(() => {
+    const renderCode = `
+    try {
+      ${renderContent}
+    } catch (e) {
+      console.error('render error:',  e);
+    }
+    return S;
+    `;
+
+    try {
+      setRenderCallable({ f: new Function('S', 'time', renderCode) });
+    } catch (e) {
+      console.error('not a function');
+    }
+  }, [renderContent]);
 
   return (
     <WebGLContext.Provider
@@ -145,6 +198,8 @@ export const WebGLProvider: React.FC = ({ children }) => {
         },
         setEditorFragmentShader,
         setEditorVertexShader,
+        initCallable: initCallable.f,
+        renderCallable: renderCallable.f,
       }}
     >
       {children}

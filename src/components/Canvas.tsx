@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 
 import {
@@ -17,8 +17,13 @@ const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
-  const { vertexShader, fragmentShader } = useWebGL();
+  const { vertexShader, fragmentShader, files, initCallable, renderCallable } =
+    useWebGL();
   const { time } = useTime();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [S, setS] = useState<{ [key: string]: any }>({});
+
   // Resize our canvas to full screen
   useResizeObserver<HTMLCanvasElement>({
     ref: canvasRef,
@@ -32,6 +37,13 @@ export const Canvas = () => {
       }
     },
   });
+
+  // When any of our files change, we will re-render the canvas and call init
+  useEffect(() => {
+    if (initCallable) {
+      setS(initCallable());
+    }
+  }, [files, initCallable]);
 
   useEffect(() => {
     const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
@@ -57,9 +69,27 @@ export const Canvas = () => {
       buffer,
     });
 
-    setUniform(gl, program, '1f', 'uTime', time);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }, [fragmentShader, time, vertexShader]);
+    if (renderCallable) {
+      setS((S) => {
+        if (S && !S.setUniform && !S.gl) {
+          S.setUniform = (
+            type: string,
+            name: string,
+            a: unknown,
+            b?: unknown,
+            c?: unknown,
+            d?: unknown,
+            e?: unknown,
+            f?: unknown
+          ) => setUniform(gl, program, type, name, a, b, c, d, e, f);
+
+          S.gl = gl;
+        }
+
+        return renderCallable(S, time);
+      });
+    }
+  }, [fragmentShader, renderCallable, time, vertexShader]);
 
   return <canvas className="w-screen h-screen" ref={canvasRef} />;
 };
