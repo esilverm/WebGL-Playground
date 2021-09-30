@@ -93,14 +93,7 @@ export const linkGPUAndCPU = (
   const fieldOfViewRadians = Math.PI * (40 / 180);
   const projection = perspective(fieldOfViewRadians, aspect, 0, 2000);
 
-  setUniform(
-    gl,
-    program,
-    'Matrix4fv',
-    'uAspect',
-    false,
-    projection as Float32List
-  );
+  setUniform(gl, program, 'Matrix4fv', 'uAspect', false, projection);
 
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);

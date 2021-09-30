@@ -18,7 +18,7 @@ attribute vec3 aPos;
 varying   vec3 vPos;
 
 void main() {
-  gl_Position = vec4((vPos=(uAspect * vec4(aPos, 1.)).xyz), 1.);
+  gl_Position = vec4((uAspect * vec4((vPos=aPos), 1.)).xyz, 1.);
 }`.trim() + '\n';
 
 export const shaderHeader = `
