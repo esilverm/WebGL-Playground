@@ -23,6 +23,7 @@ loader.init().then((monaco) => {
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentFile, setCurrentFile] = useState('fragment');
+  const [currentValue, setCurrentValue] = useState('');
   const [editorIsVisible, setEditorVisibility] = useState(true);
   const { files } = useWebGL();
   const monaco = useMonaco();
@@ -75,6 +76,7 @@ function App() {
                           backgroundColor: isActive ? '#BABABACC' : '#000000CC',
                         }}
                         onClick={() => {
+                          // possibly save on change here
                           setCurrentFile(name.split('.')[0]);
                         }}
                       >
@@ -83,7 +85,10 @@ function App() {
                     );
                   })}
                 </div>
-                <div className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black">
+                <div
+                  className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black"
+                  onClick={() => files[currentFile].setValue(currentValue)}
+                >
                   Update
                 </div>
               </div>
@@ -102,7 +107,7 @@ function App() {
                   language={files[currentFile].language}
                   value={files[currentFile].value}
                   onMount={(editor) => (editorRef.current = editor)}
-                  onChange={(value) => files[currentFile].setValue(value ?? '')}
+                  onChange={(value) => setCurrentValue(value ?? '')}
                   keepCurrentModel={true}
                   options={{
                     fontSize: 18,
