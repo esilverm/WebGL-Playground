@@ -56,31 +56,36 @@ function App() {
                 x: { type: 'spring', stiffness: 300, damping: 30 },
               }}
             >
-              <div className="h-10 w-full flex justify-start items-center my-1">
-                {Object.keys(files).map((key) => {
-                  const { name } = files[key];
-                  const isActive = name.split('.')[0] === currentFile;
-                  return (
-                    <div
-                      key={name}
-                      className={classnames(
-                        'mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none',
-                        {
-                          'text-black': isActive,
-                          'text-white': !isActive,
-                        }
-                      )}
-                      style={{
-                        backgroundColor: isActive ? '#BABABACC' : '#000000CC',
-                      }}
-                      onClick={() => {
-                        setCurrentFile(name.split('.')[0]);
-                      }}
-                    >
-                      {name.split('.')[0]}
-                    </div>
-                  );
-                })}
+              <div className="h-10 w-full flex justify-between items-center my-1">
+                <div className="flex">
+                  {Object.keys(files).map((key) => {
+                    const { name } = files[key];
+                    const isActive = name.split('.')[0] === currentFile;
+                    return (
+                      <div
+                        key={name}
+                        className={classnames(
+                          'mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none',
+                          {
+                            'text-black': isActive,
+                            'text-white': !isActive,
+                          }
+                        )}
+                        style={{
+                          backgroundColor: isActive ? '#BABABACC' : '#000000CC',
+                        }}
+                        onClick={() => {
+                          setCurrentFile(name.split('.')[0]);
+                        }}
+                      >
+                        {name.split('.')[0]}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black">
+                  Update
+                </div>
               </div>
               <div
                 className="h-full w-full relative rounded-lg overflow-hidden"
@@ -106,7 +111,6 @@ function App() {
                     minimap: {
                       enabled: false,
                     },
-                    scrollBeyondLastLine: false,
                     scrollbar: {
                       verticalScrollbarSize: 16,
                     },
