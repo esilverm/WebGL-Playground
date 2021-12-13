@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useEffect, useRef, useState } from 'react';
+import { FiSettings } from 'react-icons/fi';
 
 import { Canvas } from './components/Canvas';
 import { EditorToggle } from './components/EditorToggle';
@@ -101,11 +102,16 @@ function App() {
                     );
                   })}
                 </div>
-                <div
-                  className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black"
-                  onClick={() => files[currentFile].setValue(currentValue)}
-                >
-                  Update
+                <div className="flex flex-row">
+                  <div className="mx-1 px-4 py-0.5 rounded cursor-pointer select-none opacity-80 bg-black text-white  active:bg-gray-400 active:text-black flex items-center justify-center">
+                    <FiSettings />
+                  </div>
+                  <div
+                    className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black"
+                    onClick={() => files[currentFile].setValue(currentValue)}
+                  >
+                    Update
+                  </div>
                 </div>
               </div>
               <div
