@@ -28,6 +28,11 @@ function App() {
   const { files } = useWebGL();
   const monaco = useMonaco();
 
+  // prevent switching issues when doing first switch between files
+  useEffect(() => {
+    setCurrentValue(files[currentFile].value);
+  }, [files, currentFile]);
+
   // INFO: If we are in an editor that provides monacoMarkers, show them with our code when they appear
   useEffect(() => {
     if (monaco && monaco.editor && files[currentFile].monacoMarkers) {
@@ -77,7 +82,18 @@ function App() {
                         }}
                         onClick={() => {
                           // possibly save on change here
-                          setCurrentFile(name.split('.')[0]);
+                          const changesMade =
+                            files[currentFile].value !== currentValue;
+                          if (changesMade) {
+                            const loseUnsaved = window.confirm(
+                              'You have unsaved changes in this file. Are you sure you want to leave?'
+                            );
+                            if (loseUnsaved) {
+                              setCurrentFile(name.split('.')[0]);
+                            }
+                          } else {
+                            setCurrentFile(name.split('.')[0]);
+                          }
                         }}
                       >
                         {name.split('.')[0]}
