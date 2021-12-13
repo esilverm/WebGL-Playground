@@ -149,7 +149,7 @@ export const WebGLProvider: React.FC = ({ children }) => {
     `;
 
     try {
-      setRenderCallable({ f: new Function('S', 'time', renderCode) });
+      setRenderCallable({ f: new Function('S', 'Matrix', 'time', renderCode) });
     } catch (e) {
       console.error('not a function');
     }

@@ -54,7 +54,7 @@ export const getProgram = (
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     // the current shader is invalid
-    //console.error(`Program error: ${gl.getProgramInfoLog(program)}`);
+    console.error(gl.getProgramInfoLog(program));
   }
 
   return program;
@@ -101,11 +101,21 @@ export const linkGPUAndCPU = (
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-  const aPos = gl.getAttribLocation(program, 'aPos');
   gl.bindBuffer(channel, buffer);
-  gl.enableVertexAttribArray(aPos);
+
   const bpe = Float32Array.BYTES_PER_ELEMENT;
+
+  const aPos = gl.getAttribLocation(program, 'aPos');
+  gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 0 * bpe);
+
+  const aNor = gl.getAttribLocation(program, 'aNor');
+  gl.enableVertexAttribArray(aNor);
+  gl.vertexAttribPointer(aNor, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 3 * bpe);
+
+  const aUV = gl.getAttribLocation(program, 'aUV');
+  gl.enableVertexAttribArray(aUV);
+  gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, VERTEX_SIZE * bpe, 6 * bpe);
 };
 
 export const setUniform = (

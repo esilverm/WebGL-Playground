@@ -103,9 +103,9 @@ function App() {
                   })}
                 </div>
                 <div className="flex flex-row">
-                  <div className="mx-1 px-4 py-0.5 rounded cursor-pointer select-none opacity-80 bg-black text-white  active:bg-gray-400 active:text-black flex items-center justify-center">
+                  {/* <div className="mx-1 px-4 py-0.5 rounded cursor-pointer select-none opacity-80 bg-black text-white  active:bg-gray-400 active:text-black flex items-center justify-center">
                     <FiSettings />
-                  </div>
+                  </div> */}
                   <div
                     className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black"
                     onClick={() => files[currentFile].setValue(currentValue)}

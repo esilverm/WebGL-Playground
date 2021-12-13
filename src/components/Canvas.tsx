@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import useResizeObserver from 'use-resize-observer';
 
+import Matrix from '../helpers/matrix';
 import {
   createAndBindBuffer,
   getGLContext,
@@ -73,7 +75,7 @@ export const Canvas = () => {
   }, [files, fragmentShader, initCallable, vertexShader]);
 
   useAnimationFrame(
-    ({ time, delta }) => {
+    ({ time }) => {
       const { gl, program } = webglGlobalState;
 
       if (!gl || !program) {
@@ -97,7 +99,7 @@ export const Canvas = () => {
             S.gl = gl;
           }
 
-          return renderCallable(S, time);
+          return renderCallable(S, Matrix, time);
         });
       }
     },
