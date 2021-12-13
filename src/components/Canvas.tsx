@@ -13,12 +13,14 @@ import {
 } from '../helpers/webgl';
 import { useAnimationFrame } from '../hooks/UseAnimationFrame';
 
+import { useSettings } from './SettingsProvider';
 import { useWebGL } from './WebGLProvider';
 
 const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
+  const { settings } = useSettings();
   const { vertexShader, fragmentShader, files, initCallable, renderCallable } =
     useWebGL();
   // const { time } = useTime();
@@ -58,21 +60,25 @@ export const Canvas = () => {
 
     const program: WebGLProgram = getProgram(gl, vs, fs);
 
-    const buffer = createAndBindBuffer(
-      gl,
-      gl.ARRAY_BUFFER,
-      gl.STATIC_DRAW,
-      new Float32Array(coordinates)
-    );
+    const buffer =
+      settings.vertexSize === 3
+        ? createAndBindBuffer(
+            gl,
+            gl.ARRAY_BUFFER,
+            gl.STATIC_DRAW,
+            new Float32Array(coordinates)
+          )
+        : createAndBindBuffer(gl, gl.ARRAY_BUFFER);
 
     linkGPUAndCPU(gl, {
       program,
       channel: gl.ARRAY_BUFFER,
       buffer,
+      vertexSize: settings.vertexSize,
     });
 
     setWebglGlobalState({ gl, program });
-  }, [files, fragmentShader, initCallable, vertexShader]);
+  }, [files, fragmentShader, initCallable, vertexShader, settings.vertexSize]);
 
   useAnimationFrame(
     ({ time }) => {

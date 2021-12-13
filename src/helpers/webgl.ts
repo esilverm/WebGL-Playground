@@ -1,7 +1,5 @@
 // adapted from https://codesandbox.io/s/webgl-triangle-e90o1?from-embed=&file=/src/utils/webgl.js:0-1600
 
-const VERTEX_SIZE = 3;
-
 export const getGLContext = (
   canvas: HTMLCanvasElement
 ): WebGLRenderingContext => {
@@ -87,7 +85,13 @@ export const linkGPUAndCPU = (
     program,
     channel,
     buffer,
-  }: { program: WebGLProgram; channel: number; buffer: WebGLBuffer }
+    vertexSize,
+  }: {
+    program: WebGLProgram;
+    channel: number;
+    buffer: WebGLBuffer;
+    vertexSize: number;
+  }
 ): void => {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -110,15 +114,15 @@ export const linkGPUAndCPU = (
 
   const aPos = gl.getAttribLocation(program, 'aPos');
   gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 0 * bpe);
+  gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, vertexSize * bpe, 0 * bpe);
 
   const aNor = gl.getAttribLocation(program, 'aNor');
   gl.enableVertexAttribArray(aNor);
-  gl.vertexAttribPointer(aNor, 3, gl.FLOAT, false, VERTEX_SIZE * bpe, 3 * bpe);
+  gl.vertexAttribPointer(aNor, 3, gl.FLOAT, false, vertexSize * bpe, 3 * bpe);
 
   const aUV = gl.getAttribLocation(program, 'aUV');
   gl.enableVertexAttribArray(aUV);
-  gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, VERTEX_SIZE * bpe, 6 * bpe);
+  gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, vertexSize * bpe, 6 * bpe);
 };
 
 export const setUniform = (
