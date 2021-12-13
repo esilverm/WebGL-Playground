@@ -22,10 +22,8 @@ export const Canvas = () => {
   // const { time } = useTime();
   const [webglGlobalState, setWebglGlobalState] = useState<{
     gl: WebGLRenderingContext | null;
-    vs: WebGLShader | null;
-    fs: WebGLShader | null;
     program: WebGLProgram | null;
-  }>({ gl: null, vs: null, fs: null, program: null });
+  }>({ gl: null, program: null });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [S, setS] = useState<{ [key: string]: any }>({});
@@ -58,29 +56,29 @@ export const Canvas = () => {
 
     const program: WebGLProgram = getProgram(gl, vs, fs);
 
-    setWebglGlobalState({ gl, vs, fs, program });
+    const buffer = createAndBindBuffer(
+      gl,
+      gl.ARRAY_BUFFER,
+      gl.STATIC_DRAW,
+      new Float32Array(coordinates)
+    );
+
+    linkGPUAndCPU(gl, {
+      program,
+      channel: gl.ARRAY_BUFFER,
+      buffer,
+    });
+
+    setWebglGlobalState({ gl, program });
   }, [files, fragmentShader, initCallable, vertexShader]);
 
   useAnimationFrame(
     ({ time, delta }) => {
-      const { gl, vs, fs, program } = webglGlobalState;
+      const { gl, program } = webglGlobalState;
 
-      if (!gl || !vs || !fs || !program) {
+      if (!gl || !program) {
         return;
       }
-
-      const buffer = createAndBindBuffer(
-        gl,
-        gl.ARRAY_BUFFER,
-        gl.STATIC_DRAW,
-        new Float32Array(coordinates)
-      );
-
-      linkGPUAndCPU(gl, {
-        program,
-        channel: gl.ARRAY_BUFFER,
-        buffer,
-      });
 
       if (renderCallable) {
         setS((S) => {
