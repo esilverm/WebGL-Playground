@@ -142,7 +142,21 @@ export const Canvas = () => {
             S.gl = gl;
           }
 
-          return renderCallable(S, Matrix, time);
+          return renderCallable(
+            S,
+            Matrix,
+            matrixMultiply,
+            matrixTranspose,
+            matrixInverse,
+            matrixTransform,
+            matrixIdentity,
+            matrixTranslate,
+            matrixScale,
+            matrixRotx,
+            matrixRoty,
+            matrixRotz,
+            time
+          );
         });
       }
     },

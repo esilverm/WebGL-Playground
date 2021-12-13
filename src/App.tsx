@@ -168,6 +168,7 @@ function App() {
                             id="vertex-size"
                             type="number"
                             value={tempSettings.vertexSize}
+                            disabled={true}
                             onChange={(e) => {
                               setTempSettings({
                                 ...tempSettings,
