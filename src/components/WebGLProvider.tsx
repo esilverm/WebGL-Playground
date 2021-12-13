@@ -123,6 +123,9 @@ export const WebGLProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const initCode = `
     const S = {};
+    S.gl = gl;
+    S.setUniform = setUniform;
+    S.VERTEX_SIZE = VERTEX_SIZE;
     try {
     ${initContent}
     } catch (e) {
@@ -132,7 +135,24 @@ export const WebGLProvider: React.FC = ({ children }) => {
     `;
 
     try {
-      setInitCallable({ f: new Function(initCode) });
+      setInitCallable({
+        f: new Function(
+          'gl',
+          'setUniform',
+          'VERTEX_SIZE',
+          'matrixMultiply',
+          'matrixTranspose',
+          'matrixInverse',
+          'matrixTransform',
+          'matrixIdentity',
+          'matrixTranslate',
+          'matrixScale',
+          'matrixRotx',
+          'matrixRoty',
+          'matrixRotz',
+          initCode
+        ),
+      });
     } catch (e) {
       console.error('not a function');
     }
@@ -149,7 +169,9 @@ export const WebGLProvider: React.FC = ({ children }) => {
     `;
 
     try {
-      setRenderCallable({ f: new Function('S', 'Matrix', 'time', renderCode) });
+      setRenderCallable({
+        f: new Function('S', 'Matrix', 'time', renderCode),
+      });
     } catch (e) {
       console.error('not a function');
     }

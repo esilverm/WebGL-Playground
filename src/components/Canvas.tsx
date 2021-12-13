@@ -2,7 +2,18 @@ import React, { useRef, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import useResizeObserver from 'use-resize-observer';
 
-import Matrix from '../helpers/matrix';
+import Matrix, {
+  matrixIdentity,
+  matrixInverse,
+  matrixMultiply,
+  matrixRotx,
+  matrixRoty,
+  matrixRotz,
+  matrixScale,
+  matrixTransform,
+  matrixTranslate,
+  matrixTranspose,
+} from '../helpers/matrix';
 import {
   createAndBindBuffer,
   getGLContext,
@@ -48,9 +59,6 @@ export const Canvas = () => {
 
   // When any of our files change, we will re-render the canvas and call init
   useEffect(() => {
-    if (initCallable) {
-      setS(initCallable());
-    }
     const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
     const vs: WebGLShader = getShader(gl, vertexShader, gl.VERTEX_SHADER);
     const fs: WebGLShader = getShader(gl, fragmentShader, gl.FRAGMENT_SHADER);
@@ -76,6 +84,35 @@ export const Canvas = () => {
       buffer,
       vertexSize: settings.vertexSize,
     });
+
+    if (initCallable) {
+      setS(
+        initCallable(
+          gl,
+          (
+            type: string,
+            name: string,
+            a: unknown,
+            b?: unknown,
+            c?: unknown,
+            d?: unknown,
+            e?: unknown,
+            f?: unknown
+          ) => setUniform(gl, program, type, name, a, b, c, d, e, f),
+          settings.vertexSize,
+          matrixMultiply,
+          matrixTranspose,
+          matrixInverse,
+          matrixTransform,
+          matrixIdentity,
+          matrixTranslate,
+          matrixScale,
+          matrixRotx,
+          matrixRoty,
+          matrixRotz
+        )
+      );
+    }
 
     setWebglGlobalState({ gl, program });
   }, [files, fragmentShader, initCallable, vertexShader, settings.vertexSize]);

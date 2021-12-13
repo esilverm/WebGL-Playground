@@ -104,19 +104,19 @@ export const matrixScale = (s: number[]) => [
   1,
 ];
 
-export const matrixRotX = (theta: number) => {
+export const matrixRotx = (theta: number) => {
   let c = Math.cos(theta);
   let s = Math.sin(theta);
   return [1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1];
 };
 
-export const matrixRotY = (theta: number) => {
+export const matrixRoty = (theta: number) => {
   let c = Math.cos(theta);
   let s = Math.sin(theta);
   return [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1];
 };
 
-export const matrixRotZ = (theta: number) => {
+export const matrixRotz = (theta: number) => {
   let c = Math.cos(theta);
   let s = Math.sin(theta);
   return [c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -154,15 +154,15 @@ export default class Matrix {
   }
 
   public rotx(theta: number) {
-    return this.set(matrixMultiply(this._m(), matrixRotX(theta)));
+    return this.set(matrixMultiply(this._m(), matrixRotx(theta)));
   }
 
   public roty(theta: number) {
-    return this.set(matrixMultiply(this._m(), matrixRotY(theta)));
+    return this.set(matrixMultiply(this._m(), matrixRoty(theta)));
   }
 
   public rotz(theta: number) {
-    return this.set(matrixMultiply(this._m(), matrixRotZ(theta)));
+    return this.set(matrixMultiply(this._m(), matrixRotz(theta)));
   }
 
   public save() {
