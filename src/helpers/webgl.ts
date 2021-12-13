@@ -63,8 +63,8 @@ export const getProgram = (
 export const createAndBindBuffer = (
   gl: WebGLRenderingContext,
   bufferType: number,
-  typeOfDrawing: number,
-  data: BufferSource
+  typeOfDrawing?: number,
+  data?: BufferSource
 ): WebGLBuffer => {
   const buffer = gl.createBuffer();
 
@@ -73,7 +73,10 @@ export const createAndBindBuffer = (
   }
 
   gl.bindBuffer(bufferType, buffer);
-  gl.bufferData(bufferType, data, typeOfDrawing);
+
+  if (typeOfDrawing && data) {
+    gl.bufferData(bufferType, data, typeOfDrawing);
+  }
 
   return buffer;
 };
