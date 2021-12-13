@@ -26,6 +26,7 @@ function App() {
   const [currentFile, setCurrentFile] = useState('fragment');
   const [currentValue, setCurrentValue] = useState('');
   const [editorIsVisible, setEditorVisibility] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { files } = useWebGL();
   const monaco = useMonaco();
 
@@ -74,12 +75,15 @@ function App() {
                         className={classnames(
                           'mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none',
                           {
-                            'text-black': isActive,
-                            'text-white': !isActive,
+                            'text-black': isActive && !settingsOpen,
+                            'text-white': !isActive || settingsOpen,
                           }
                         )}
                         style={{
-                          backgroundColor: isActive ? '#BABABACC' : '#000000CC',
+                          backgroundColor:
+                            isActive && !settingsOpen
+                              ? '#BABABACC'
+                              : '#000000CC',
                         }}
                         onClick={() => {
                           // possibly save on change here
@@ -87,13 +91,19 @@ function App() {
                             files[currentFile].value !== currentValue;
                           if (changesMade) {
                             const loseUnsaved = window.confirm(
-                              'You have unsaved changes in this file. Are you sure you want to leave?'
+                              settingsOpen
+                                ? 'The active file under settings has unsaved changes. Are you sure you want to leave?'
+                                : 'You have unsaved changes in this file. Are you sure you want to leave?'
                             );
                             if (loseUnsaved) {
                               setCurrentFile(name.split('.')[0]);
                             }
                           } else {
                             setCurrentFile(name.split('.')[0]);
+                          }
+
+                          if (settingsOpen) {
+                            setSettingsOpen(false);
                           }
                         }}
                       >
@@ -103,9 +113,21 @@ function App() {
                   })}
                 </div>
                 <div className="flex flex-row">
-                  {/* <div className="mx-1 px-4 py-0.5 rounded cursor-pointer select-none opacity-80 bg-black text-white  active:bg-gray-400 active:text-black flex items-center justify-center">
+                  <div
+                    className={classnames(
+                      'mx-1 px-4 py-0.5 rounded cursor-pointer select-none flex items-center justify-center',
+                      {
+                        'text-black': settingsOpen,
+                        'text-white': !settingsOpen,
+                      }
+                    )}
+                    style={{
+                      backgroundColor: settingsOpen ? '#BABABACC' : '#000000CC',
+                    }}
+                    onClick={() => setSettingsOpen(!settingsOpen)}
+                  >
                     <FiSettings />
-                  </div> */}
+                  </div>
                   <div
                     className="mx-1 px-4 py-0.5 capitalize font-mono rounded cursor-pointer select-none justify-self-end opacity-80 bg-black text-white active:bg-gray-400 active:text-black"
                     onClick={() => files[currentFile].setValue(currentValue)}
