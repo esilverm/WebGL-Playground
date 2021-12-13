@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import useResizeObserver from 'use-resize-observer';
 
 import Matrix, {
