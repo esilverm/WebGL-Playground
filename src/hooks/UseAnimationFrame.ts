@@ -1,9 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+// adapted from
 // https://github.com/franciscop/use-animation-frame/blob/master/index.js
 import { useEffect, useRef } from 'react';
 
+type AnimationFrame = {
+  time: number;
+  delta: number;
+};
+
 export const useAnimationFrame = (
-  callback: Function,
+  callback: (a: AnimationFrame) => void,
   dependencies: Array<any>
 ) => {
   if (typeof performance === 'undefined' || typeof window === 'undefined') {

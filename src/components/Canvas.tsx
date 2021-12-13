@@ -9,8 +9,8 @@ import {
   linkGPUAndCPU,
   setUniform,
 } from '../helpers/webgl';
+import { useAnimationFrame } from '../hooks/UseAnimationFrame';
 
-import { useTime } from './TimeProvider';
 import { useWebGL } from './WebGLProvider';
 
 const coordinates = [-1, 1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0];
@@ -19,7 +19,13 @@ export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const { vertexShader, fragmentShader, files, initCallable, renderCallable } =
     useWebGL();
-  const { time } = useTime();
+  // const { time } = useTime();
+  const [webglGlobalState, setWebglGlobalState] = useState<{
+    gl: WebGLRenderingContext | null;
+    vs: WebGLShader | null;
+    fs: WebGLShader | null;
+    program: WebGLProgram | null;
+  }>({ gl: null, vs: null, fs: null, program: null });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [S, setS] = useState<{ [key: string]: any }>({});
@@ -43,53 +49,62 @@ export const Canvas = () => {
     if (initCallable) {
       setS(initCallable());
     }
-  }, [files, initCallable]);
-
-  useEffect(() => {
     const gl: WebGLRenderingContext = getGLContext(canvasRef.current);
     const vs: WebGLShader = getShader(gl, vertexShader, gl.VERTEX_SHADER);
     const fs: WebGLShader = getShader(gl, fragmentShader, gl.FRAGMENT_SHADER);
-
     if (!vs || !fs) {
       return;
     }
 
     const program: WebGLProgram = getProgram(gl, vs, fs);
 
-    const buffer = createAndBindBuffer(
-      gl,
-      gl.ARRAY_BUFFER,
-      gl.STATIC_DRAW,
-      new Float32Array(coordinates)
-    );
+    setWebglGlobalState({ gl, vs, fs, program });
+  }, [files, fragmentShader, initCallable, vertexShader]);
 
-    linkGPUAndCPU(gl, {
-      program,
-      channel: gl.ARRAY_BUFFER,
-      buffer,
-    });
+  useAnimationFrame(
+    ({ time, delta }) => {
+      const { gl, vs, fs, program } = webglGlobalState;
 
-    if (renderCallable) {
-      setS((S) => {
-        if (S && !S.setUniform && !S.gl) {
-          S.setUniform = (
-            type: string,
-            name: string,
-            a: unknown,
-            b?: unknown,
-            c?: unknown,
-            d?: unknown,
-            e?: unknown,
-            f?: unknown
-          ) => setUniform(gl, program, type, name, a, b, c, d, e, f);
+      if (!gl || !vs || !fs || !program) {
+        return;
+      }
 
-          S.gl = gl;
-        }
+      const buffer = createAndBindBuffer(
+        gl,
+        gl.ARRAY_BUFFER,
+        gl.STATIC_DRAW,
+        new Float32Array(coordinates)
+      );
 
-        return renderCallable(S, time);
+      linkGPUAndCPU(gl, {
+        program,
+        channel: gl.ARRAY_BUFFER,
+        buffer,
       });
-    }
-  }, [fragmentShader, renderCallable, time, vertexShader]);
+
+      if (renderCallable) {
+        setS((S) => {
+          if (S && !S.setUniform && !S.gl) {
+            S.setUniform = (
+              type: string,
+              name: string,
+              a: unknown,
+              b?: unknown,
+              c?: unknown,
+              d?: unknown,
+              e?: unknown,
+              f?: unknown
+            ) => setUniform(gl, program, type, name, a, b, c, d, e, f);
+
+            S.gl = gl;
+          }
+
+          return renderCallable(S, time);
+        });
+      }
+    },
+    [fragmentShader, renderCallable, vertexShader, webglGlobalState]
+  );
 
   return <canvas className="w-screen h-screen" ref={canvasRef} />;
 };
