@@ -9,6 +9,11 @@ import { Canvas } from './components/Canvas';
 import { EditorToggle } from './components/EditorToggle';
 import { useSettings, SettingsProvider } from './components/SettingsProvider';
 import { useWebGL, WebGLProvider } from './components/WebGLProvider';
+import { example0 } from './lib/example0';
+import { example1 } from './lib/example1';
+import { example2 } from './lib/example2';
+import { example3 } from './lib/example3';
+import { example4 } from './lib/example4';
 import { language, conf } from './monaco/glsl';
 import { theme } from './monaco/theme';
 
@@ -21,6 +26,13 @@ loader.init().then((monaco) => {
   monaco.editor.defineTheme('glsl-dark', theme);
 });
 
+const examples = [
+  example0 as { [index: string]: any },
+  example1 as { [index: string]: any },
+  example2 as { [index: string]: any },
+  example3 as { [index: string]: any },
+  example4 as { [index: string]: any },
+];
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentFile, setCurrentFile] = useState('fragment');
@@ -31,6 +43,7 @@ function App() {
   const monaco = useMonaco();
   const { settings, setSettings } = useSettings();
   const [tempSettings, setTempSettings] = useState(settings);
+  const [activeExample, setActiveExample] = useState('example 0');
 
   // prevent switching issues when doing first switch between files
   useEffect(() => {
@@ -149,7 +162,7 @@ function App() {
                     </h2>
                     <div className="flex flex-col h-5/6 relative justify-between">
                       <div className="flex flex-col">
-                        <div className="flex flex-row items-center justify-between">
+                        <div className="flex flex-row items-center justify-between my-2">
                           <div className="w-1/2">
                             <label
                               className="text-white font-sans font-semibold text-xl mr-2"
@@ -178,6 +191,49 @@ function App() {
                             max={8}
                             min={3}
                           />
+                        </div>
+                        <div className="flex flex-row items-center justify-between my-2">
+                          <div className="w-1/2">
+                            <label
+                              className="text-white font-sans font-semibold text-xl mr-2"
+                              htmlFor="Demo-Choice"
+                              title="This sets the demo to run."
+                            >
+                              Demo
+                            </label>
+                            <p className="text-white text-sm">
+                              This sets the demo to run.
+                            </p>
+                          </div>
+                          <select
+                            className="px-4 py-2 bg-transparent text-white font-sans font-semibold text-lg"
+                            id="Demo-Choice"
+                            value={activeExample}
+                            onChange={(e) => {
+                              const index = parseInt(
+                                e.target.value.split(' ')[1],
+                                10
+                              );
+                              const example = examples[index];
+                              Object.keys(files).forEach((key) => {
+                                files[key].setValue(example[key]);
+                              });
+                              setActiveExample(e.target.value);
+                            }}
+                          >
+                            <option value="example 0">Default</option>
+                            {examples.map(
+                              (example, index) =>
+                                index > 0 && (
+                                  <option
+                                    key={index}
+                                    value={`example ${index}`}
+                                  >
+                                    Example {index}
+                                  </option>
+                                )
+                            )}
+                          </select>
                         </div>
                       </div>
                       <div
