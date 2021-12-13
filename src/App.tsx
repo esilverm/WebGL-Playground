@@ -7,7 +7,7 @@ import { FiSettings } from 'react-icons/fi';
 
 import { Canvas } from './components/Canvas';
 import { EditorToggle } from './components/EditorToggle';
-import { TimeProvider } from './components/TimeProvider';
+import { useSettings, SettingsProvider } from './components/SettingsProvider';
 import { useWebGL, WebGLProvider } from './components/WebGLProvider';
 import { language, conf } from './monaco/glsl';
 import { theme } from './monaco/theme';
@@ -29,6 +29,8 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { files } = useWebGL();
   const monaco = useMonaco();
+  const { settings, setSettings } = useSettings();
+  const [tempSettings, setTempSettings] = useState(settings);
 
   // prevent switching issues when doing first switch between files
   useEffect(() => {
@@ -140,36 +142,87 @@ function App() {
                 className="h-full w-full relative rounded-lg overflow-hidden"
                 style={{ backgroundColor: '#000000CC' }}
               >
-                <div className="absolute uppercase  text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans cursor-text select-none">
-                  {files[currentFile].language === 'glsl' ? 'webgl' : 'js'}
-                </div>
-                <Editor
-                  height="100%"
-                  width="60vw"
-                  theme="glsl-dark"
-                  path={files[currentFile].name}
-                  language={files[currentFile].language}
-                  value={files[currentFile].value}
-                  onMount={(editor) => (editorRef.current = editor)}
-                  onChange={(value) => setCurrentValue(value ?? '')}
-                  keepCurrentModel={true}
-                  options={{
-                    fontSize: 18,
-                    formatOnPaste: true,
-                    showUnused: true,
-                    minimap: {
-                      enabled: false,
-                    },
-                    scrollbar: {
-                      verticalScrollbarSize: 16,
-                    },
-                    padding: {
-                      top: 16,
-                    },
-                    // NOTE: if the wrapping gets annoying we can just turn it to "on"
-                    wordWrap: 'bounded',
-                  }}
-                />
+                {settingsOpen ? (
+                  <div className="h-full py-6 px-6" style={{ width: '60vw' }}>
+                    <h2 className="text-white font-sans font-semibold text-3xl mb-6">
+                      Editor Settings
+                    </h2>
+                    <div className="flex flex-col h-5/6 relative justify-between">
+                      <div className="flex flex-col">
+                        <div className="flex flex-row items-center justify-between">
+                          <div className="w-1/2">
+                            <label
+                              className="text-white font-sans font-semibold text-xl mr-2"
+                              htmlFor="vertex-size"
+                              title="This sets the size of the vertexes in the shader. Recommended values are 3 and 8."
+                            >
+                              Vertex Size
+                            </label>
+                            <p className="text-white text-sm">
+                              This sets the size of the vertexes in the shader.
+                              Recommended values are 3 and 8.
+                            </p>
+                          </div>
+                          <input
+                            className=" px-4 py-2 bg-transparent text-white font-sans font-semibold text-lg"
+                            id="vertex-size"
+                            type="number"
+                            value={tempSettings.vertexSize}
+                            onChange={(e) => {
+                              setTempSettings({
+                                ...tempSettings,
+                                vertexSize: parseInt(e.target.value, 10),
+                              });
+                            }}
+                            max={8}
+                            min={3}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="inline-block self-end text-white rounded border border-white px-4 py-2 mb-4 cursor-pointer select-none active:bg-gray-400 active:text-black active:border-black"
+                        onClick={() => {
+                          setSettings(tempSettings);
+                        }}
+                      >
+                        Save Settings
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="absolute uppercase  text-white right-0 top-0 z-20 py-4 px-6 font-semibold tracking-wider font-sans cursor-text select-none">
+                      {files[currentFile].language === 'glsl' ? 'webgl' : 'js'}
+                    </div>
+                    <Editor
+                      height="100%"
+                      width="60vw"
+                      theme="glsl-dark"
+                      path={files[currentFile].name}
+                      language={files[currentFile].language}
+                      value={files[currentFile].value}
+                      onMount={(editor) => (editorRef.current = editor)}
+                      onChange={(value) => setCurrentValue(value ?? '')}
+                      keepCurrentModel={true}
+                      options={{
+                        fontSize: 18,
+                        formatOnPaste: true,
+                        showUnused: true,
+                        minimap: {
+                          enabled: false,
+                        },
+                        scrollbar: {
+                          verticalScrollbarSize: 16,
+                        },
+                        padding: {
+                          top: 16,
+                        },
+                        // NOTE: if the wrapping gets annoying we can just turn it to "on"
+                        wordWrap: 'bounded',
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </motion.div>
           )}
@@ -183,9 +236,9 @@ function App() {
 const AppWithProviders = () => {
   return (
     <WebGLProvider>
-      <TimeProvider>
+      <SettingsProvider>
         <App />
-      </TimeProvider>
+      </SettingsProvider>
     </WebGLProvider>
   );
 };
